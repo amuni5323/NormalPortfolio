@@ -25,15 +25,15 @@
 
     .profile-img {
       width: 80%;
-      max-width: none;
       height: 100vh;
       object-fit: cover;
-      border-radius: 0;
       border-left: 40px solid orange;
       border-bottom: 40px solid orange;
-      border-top: 40px solid orange;
+      border-top: 40px solid orange; /* ✅ ensure top border is visible */
       position: relative;
       z-index: 1;
+      display: block;
+      margin: 0 auto; /* center horizontally if needed */
     }
 
     /* Dark mode styles */
@@ -99,8 +99,8 @@
     /* Theme toggle */
     .theme-toggle {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 30px;   /* ✅ push down from very top */
+      right: 30px; /* ✅ add space from right edge */
       z-index: 1001;
       font-size: 24px;
       cursor: pointer;
@@ -148,6 +148,14 @@
       background: var(--accent-green) !important;
     }
 
+    /* ✅ Responsive Fix for Mobile */
+    @media (max-width: 768px) {
+      .profile-img {
+        width: 100%;
+        height: auto;   /* don’t force full height on small screens */
+        margin-top: 60px; /* ✅ leave gap for theme toggle */
+      }
+    }
   </style>
 </head>
 <body class="light">
