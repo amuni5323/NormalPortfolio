@@ -19,32 +19,38 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #fff;
       color: #212529;
-      height: 100vh;
+      min-height: 100vh;
       overflow-x: hidden;
     }
 
+    /* Profile Image */
     .profile-img {
-      width: 80%;
-      max-width: none;
-      height: 100vh;
+      width: 100%;
+      height: auto;
       object-fit: cover;
-      border-radius: 0;
       border-left: 40px solid orange;
       border-bottom: 40px solid orange;
       border-top: 40px solid orange;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Dark mode styles */
-    body.dark {
-      background-color: #121212;
-      color: #f0f0f0;
     }
     body.dark .profile-img {
       border-color: var(--accent-green);
     }
 
+    /* On mobile: image above text */
+    @media (max-width: 767px) {
+      .profile-img {
+        border: 10px solid orange;
+        border-radius: 10px;
+        height: auto;
+        max-height: 300px;
+        margin-bottom: 20px;
+      }
+      body.dark .profile-img {
+        border-color: var(--accent-green);
+      }
+    }
+
+    /* Text Colors */
     .name-text {
       color: var(--accent-orange);
       transition: color 0.3s ease;
@@ -53,7 +59,7 @@
       color: var(--accent-green);
     }
 
-    /* Side navbar and theme toggle */
+    /* Side navbar */
     .side-navbar {
       position: fixed;
       top: 50%;
@@ -66,7 +72,7 @@
     }
     .side-navbar a {
       background-color: #222;
-      color: var(--accent-orange); /* orange in light mode */
+      color: var(--accent-orange);
       padding: 12px;
       border-radius: 50%;
       text-align: center;
@@ -79,7 +85,7 @@
       height: 44px;
     }
     body.dark .side-navbar a {
-      color: var(--accent-green); /* green in dark mode */
+      color: var(--accent-green);
     }
     .side-navbar a.active,
     .side-navbar a:hover {
@@ -92,10 +98,6 @@
       color: #fff;
     }
 
-    .home {
-      margin-right: 10%;
-    }
-
     /* Theme toggle */
     .theme-toggle {
       position: fixed;
@@ -104,14 +106,11 @@
       z-index: 1001;
       font-size: 24px;
       cursor: pointer;
-      color: var(--accent-orange); /* orange in light */
+      color: var(--accent-orange);
       transition: color 0.3s ease;
     }
     body.dark .theme-toggle {
-      color: var(--accent-green); /* green in dark */
-    }
-    .theme-toggle:hover {
-      color: inherit;
+      color: var(--accent-green);
     }
 
     /* Download CV button */
@@ -131,7 +130,7 @@
       text-decoration: none;
       font-weight: 700;
       box-shadow: 0 8px 18px rgba(0,0,0,0.45);
-      border: 2px solid var(--accent-orange); /* default orange */
+      border: 2px solid var(--accent-orange);
     }
     .download-cv a i {
       background: var(--accent-orange);
@@ -139,15 +138,12 @@
       padding: 8px;
       border-radius: 50%;
     }
-
-    /* Dark mode button override */
     body.dark .download-cv a {
       border-color: var(--accent-green) !important;
     }
     body.dark .download-cv a i {
       background: var(--accent-green) !important;
     }
-
   </style>
 </head>
 <body class="light">
@@ -166,21 +162,25 @@
   </nav>
 
   <!-- Main Section -->
-  <section id="home" class="d-flex vh-100 home">
-    <div class="col-md-6 p-0 profile-img-wrapper">
-      <img src="images/profile.jpg" alt="Amina" class="profile-img" />
-    </div>
-    <div class="col-md-6 d-flex flex-column justify-content-center px-5">
-      <h1 class="mb-2">Hi, I'm <span class="name-text">Amina Mohammedbrhan</span></h1>
-      <h3 class="mb-3">A Software Developer</h3>
-      <p class="description mb-4">
-        I'm passionate about building modern web applications using HTML, CSS, JavaScript, and Bootstrap.
-        I’ve also explored frameworks like React and backends like Node.js and Express. I love solving real-world problems with clean, efficient code.
-      </p>
-      <div class="download-cv">
-        <a href="Amina_CV.pdf" download>
-          Download CV <i class="bi bi-download"></i>
-        </a>
+  <section id="home" class="container-fluid vh-100 d-flex align-items-center">
+    <div class="row w-100 align-items-center">
+      <!-- Image Column -->
+      <div class="col-md-6 text-center">
+        <img src="images/profile.jpg" alt="Amina" class="profile-img" />
+      </div>
+      <!-- Text Column -->
+      <div class="col-md-6 d-flex flex-column justify-content-center px-5">
+        <h1 class="mb-2">Hi, I'm <span class="name-text">Amina Mohammedbrhan</span></h1>
+        <h3 class="mb-3">A Software Developer</h3>
+        <p class="description mb-4">
+          I'm passionate about building modern web applications using HTML, CSS, JavaScript, and Bootstrap.
+          I’ve also explored frameworks like React and backends like Node.js and Express. I love solving real-world problems with clean, efficient code.
+        </p>
+        <div class="download-cv">
+          <a href="Amina_CV.pdf" download>
+            Download CV <i class="bi bi-download"></i>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -192,14 +192,11 @@
 
     toggle.addEventListener('click', () => {
       body.classList.toggle('dark');
-      body.classList.toggle('light'); // ensure light mode applies
-
+      body.classList.toggle('light');
       if (body.classList.contains('dark')) {
-        icon.classList.remove('bi-brightness-high-fill');
-        icon.classList.add('bi-moon-fill');
+        icon.classList.replace('bi-brightness-high-fill', 'bi-moon-fill');
       } else {
-        icon.classList.remove('bi-moon-fill');
-        icon.classList.add('bi-brightness-high-fill');
+        icon.classList.replace('bi-moon-fill', 'bi-brightness-high-fill');
       }
     });
   </script>
