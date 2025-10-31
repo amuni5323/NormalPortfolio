@@ -7,6 +7,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
+    :root{
+      --accent: #FFA500;     /* light-mode accent (orange) */
+      --accent-dark: #28a745;/* dark-mode accent (green)  */
+    }
+
+    /* ---------- Page basics ---------- */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -15,13 +21,87 @@
       min-height: 100vh;
       overflow-x: hidden;
       transition: background-color 0.3s, color 0.3s;
+      position: relative;
     }
-
     body.dark {
-      background-color: #121212;
+      background-color: #0b0b0b;
       color: #f0f0f0;
     }
 
+    /* ---------- Motion background container ---------- */
+    /* full-screen fixed element sitting behind everything */
+    .bg-anim {
+      position: fixed;
+      inset: 0;               /* top:0;right:0;bottom:0;left:0 */
+      z-index: -2;
+      pointer-events: none;   /* elements behind are still interactive */
+      overflow: hidden;
+      display: block;
+      will-change: transform;
+    }
+
+    /* animated gradient layer */
+    .bg-anim::before {
+      content: "";
+      position: absolute;
+      inset: -25% -25% -25% -25%; /* allow gradient to move */
+      background: linear-gradient(120deg, rgba(255,160,64,0.10) 0%, rgba(250,200,100,0.08) 20%, rgba(200,100,255,0.05) 50%, rgba(64,160,255,0.06) 80%, rgba(255,160,64,0.10) 100%);
+      filter: blur(40px);
+      transform: translate3d(0,0,0);
+      animation: gradientShift 18s linear infinite;
+      transition: opacity 0.3s;
+    }
+    body.dark .bg-anim::before {
+      background: linear-gradient(120deg, rgba(40,167,69,0.08) 0%, rgba(24,120,255,0.06) 30%, rgba(145,60,200,0.04) 70%, rgba(40,167,69,0.08) 100%);
+      filter: blur(44px) contrast(1.05);
+      animation-duration: 22s;
+    }
+
+    @keyframes gradientShift {
+      0%   { transform: translate3d(-5%, 0, 0) rotate(0deg) scale(1.02); }
+      25%  { transform: translate3d(5%, -3%, 0) rotate(2deg) scale(1.05); }
+      50%  { transform: translate3d(-3%, 3%, 0) rotate(-1deg) scale(1.03); }
+      75%  { transform: translate3d(4%, -2%, 0) rotate(1deg) scale(1.04); }
+      100% { transform: translate3d(-5%, 0, 0) rotate(0deg) scale(1.02); }
+    }
+
+    /* ---------- Floating orbs for depth ---------- */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(18px);
+      opacity: 0.55;
+      mix-blend-mode: screen;
+      transform: translate3d(0,0,0);
+      animation: floatUpDown 10s ease-in-out infinite;
+      will-change: transform, opacity;
+    }
+    .orb.small  { width: 110px; height: 110px; }
+    .orb.medium { width: 200px; height: 200px; }
+    .orb.large  { width: 360px; height: 360px; }
+
+    .orb.one   { left: 5%;  top: 10%;  background: radial-gradient(circle at 30% 30%, rgba(255,170,80,0.28), rgba(255,170,80,0.06)); animation-duration: 18s; }
+    .orb.two   { right: 8%; top: 5%;   background: radial-gradient(circle at 70% 40%, rgba(150,90,255,0.20), rgba(150,90,255,0.03)); animation-duration: 20s; animation-delay: 1s;}
+    .orb.three { left: 20%; bottom: 5%; background: radial-gradient(circle at 40% 60%, rgba(90,180,255,0.18), rgba(90,180,255,0.02)); animation-duration: 16s; animation-delay: 0.6s;}
+    .orb.four  { right: 28%; bottom: 8%; background: radial-gradient(circle at 60% 50%, rgba(255,120,120,0.14), rgba(255,120,120,0.02)); animation-duration: 24s; animation-delay: 2s; }
+
+    body.dark .orb { opacity: 0.35; mix-blend-mode: normal; filter: blur(20px) saturate(120%); }
+
+    @keyframes floatUpDown {
+      0%   { transform: translateY(0px) scale(1); opacity: 0.6; }
+      25%  { transform: translateY(-18px) scale(1.03); opacity: 0.7; }
+      50%  { transform: translateY(6px) scale(0.99); opacity: 0.5; }
+      75%  { transform: translateY(-10px) scale(1.01); opacity: 0.65; }
+      100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+    }
+
+    /* reduce motion on small screens for performance */
+    @media (max-width: 576px) {
+      .bg-anim::before { filter: blur(36px); }
+      .orb { display: none; }
+    }
+
+    /* ---------- Existing page styles (kept mostly unchanged) ---------- */
     /* Navbar */
     .side-navbar {
       position: fixed;
@@ -35,7 +115,7 @@
     }
     .side-navbar a {
       background-color: #222;
-      color: #FFA500;
+      color: var(--accent);
       padding: 12px;
       border-radius: 50%;
       text-align: center;
@@ -48,16 +128,17 @@
       transition: all 0.3s;
     }
     body.dark .side-navbar a {
-      color: #28a745;
+      color: var(--accent-dark);
+      background-color: rgba(0,0,0,0.35);
     }
     .side-navbar a.active,
     .side-navbar a:hover {
       color: #fff;
-      background-color: #FFA500;
+      background-color: var(--accent);
     }
     body.dark .side-navbar a.active,
     body.dark .side-navbar a:hover {
-      background-color: #28a745;
+      background-color: var(--accent-dark);
       color: #fff;
     }
 
@@ -69,18 +150,18 @@
       font-size: 24px;
       cursor: pointer;
       transition: color 0.3s;
-      color: #FFA500;
+      color: var(--accent);
       z-index: 1001;
     }
-    body.dark .theme-toggle {
-      color: #28a745;
-    }
+    body.dark .theme-toggle { color: var(--accent-dark); }
 
-    /* Projects */
+    /* Projects (kept) */
     .projects-container {
       max-width: 960px;
       margin: 40px auto;
       padding: 0 15px;
+      position: relative;
+      z-index: 2; /* keep content above anim background */
     }
 
     .project-card {
@@ -119,36 +200,27 @@
       opacity: 1;
     }
 
-    .project-overlay h5 {
-      margin-bottom: 10px;
-      color: black;
-      transition: color 0.3s;
-    }
-    body.dark .project-overlay h5 {
-      color: white;
-    }
+    .project-overlay h5 { margin-bottom: 10px; color: black; transition: color 0.3s; }
+    body.dark .project-overlay h5 { color: white; }
 
-    .project-overlay p {
-      margin-bottom: 15px;
-      color: rgb(244, 242, 237);
-      transition: color 0.3s;
-    }
-    body.dark .project-overlay p {
-      color: rgb(13, 13, 13);
-    }
+    .project-overlay p { margin-bottom: 15px; color: rgb(244, 242, 237); transition: color 0.3s; }
+    body.dark .project-overlay p { color: rgb(13, 13, 13); }
 
-    .project-overlay .btn {
-      background-color: rgb(236, 235, 232);
-      border: none;
-      transition: background-color 0.3s;
-    }
-    body.dark .project-overlay .btn {
-      background-color: rgb(110, 114, 110);
-    }
+    .project-overlay .btn { background-color: rgb(236, 235, 232); border: none; transition: background-color 0.3s; }
+    body.dark .project-overlay .btn { background-color: rgb(110, 114, 110); }
   </style>
 </head>
 
 <body class="dark">
+<canvas id="snowCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
+
+  <!-- Motion background element (behind content) -->
+  <div class="bg-anim" aria-hidden="true">
+    <div class="orb one large"></div>
+    <div class="orb two medium"></div>
+    <div class="orb three medium"></div>
+    <div class="orb four small"></div>
+  </div>
 
   <!-- Theme Toggle -->
   <div class="theme-toggle" title="Toggle Theme" role="button" tabindex="0">
@@ -242,8 +314,66 @@
         icon.classList.add('bi-sun-fill');
       }
     });
+
+    // Accessibility: allow toggle with Enter/Space
+    toggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle.click();
+      }
+    });
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+const canvas = document.getElementById('snowCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function createParticles(num) {
+  particles = [];
+  for (let i = 0; i < num; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 3 + 1,
+      speedY: Math.random() * 1 + 0.2,
+      speedX: Math.random() * 0.5 - 0.25
+    });
+  }
+}
+createParticles(120); // number of particles
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Set particle color based on theme
+  let color = document.body.classList.contains('dark') ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)';
+  ctx.fillStyle = color;
+
+  ctx.beginPath();
+  for (let p of particles) {
+    ctx.moveTo(p.x, p.y);
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    p.y += p.speedY;
+    p.x += p.speedX;
+    if (p.y > canvas.height) p.y = 0;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.x < 0) p.x = canvas.width;
+  }
+  ctx.fill();
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+</script>
+
+
 </body>
 </html>
